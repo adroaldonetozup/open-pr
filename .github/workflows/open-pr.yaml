@@ -68,10 +68,9 @@ jobs:
 
           # Itera sobre as branches e cria uma PR para cada uma
           for BRANCH in $RC_BRANCHES; do
-            PR_BRANCH="$BRANCH"
-            echo "Creating PR for $PR_BRANCH"
+            echo "Creating PR for $BRANCH"
             # Cria a pull request
-            gh pr create --base $MAIN_BRANCH --head $PR_BRANCH --title "Update from $MAIN_BRANCH" --body "Automatically created PR"
+            gh pr create --base $MAIN_BRANCH --head $BRANCH --title "Update from $MAIN_BRANCH" --body "Automatically created PR"
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
