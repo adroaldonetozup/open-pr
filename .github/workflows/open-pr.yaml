@@ -15,7 +15,7 @@ jobs:
         
       - name: Create RC Branches and Open PRs
         run: |
-          MAIN_MERGE_BRANCH="merge/main-$(date +%s)
+          MAIN_MERGE_BRANCH="merge/main-$(date +%s)""
           git fetch origin
           git checkout -b $MAIN_MERGE_BRANCH main
           git push -u origin $MAIN_MERGE_BRANCH
