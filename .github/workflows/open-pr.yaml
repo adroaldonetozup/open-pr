@@ -64,11 +64,11 @@ jobs:
           RC_BRANCHES=$(git branch --list 'rc-*')
 
           # Remove o prefixo "rc-"
-          RC_BRANCHES=${RC_BRANCHES//rc-/}
+          BRANCHES=${RC_BRANCHES//rc-/}
 
           # Itera sobre as branches e cria uma PR para cada uma
           for BRANCH in $RC_BRANCHES; do
-            PR_BRANCH="rc-$BRANCH"
+            PR_BRANCH="$BRANCH"
             echo "Creating PR for $PR_BRANCH"
             # Cria a pull request
             gh pr create --base $MAIN_BRANCH --head $PR_BRANCH --title "Update from $MAIN_BRANCH" --body "Automatically created PR"
