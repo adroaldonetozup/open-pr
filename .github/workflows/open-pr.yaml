@@ -55,7 +55,7 @@ jobs:
           git checkout -b $BRANCH_NAME $MAIN_BRANCH
           git push origin $BRANCH_NAME
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
 
       - name: Create PR
@@ -74,4 +74,4 @@ jobs:
             gh pr create --base $MAIN_BRANCH --head $PR_BRANCH --title "Update from $MAIN_BRANCH" --body "Automatically created PR"
           done
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
