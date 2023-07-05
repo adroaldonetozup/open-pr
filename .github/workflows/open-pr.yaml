@@ -23,15 +23,64 @@ jobs:
           branches=$(git ls-remote --heads origin "heads/rc-*" | awk -F'/' '{print $3}')
           for branch in $branches
           do
-            # git checkout -b $branch origin/$branch
-            # git push -u origin $branch
-            echo "$branch"
-            echo "$MAIN_MERGE_BRANCH"
-            hub pull-request -b $MAIN_MERGE_BRANCH -h $branch -m "Pull Request for $branch"
+            # # git checkout -b $branch origin/$branch
+            # # git push -u origin $branch
+            # branch_ref=$(git rev-parse --abbrev-ref HEAD)
+            pr_title="Pull Request for $branch"
+            pr_body="This is a pull request for the branch $branch"
+            pr_endpoint="https://api.github.com/repos/adroaldonetozup/open-pr/pulls"
+            
+            curl -X POST $pr_endpoint \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d @- << EOF
+              {
+                "title": "$pr_title",
+                "body": "$pr_body",
+                "head": "$branch",
+                "base": "$MAIN_MERGE_BRANCH"
+              }
+              EOF
           done
           
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+# name: Create RC Branches and Open PRs
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   create-branches-and-open-prs:
+#     runs-on: ubuntu-latest
+    
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+        
+#       - name: Create RC Branches and Open PRs
+#         run: |
+#           MAIN_MERGE_BRANCH="merge/main-$(date +%s)"
+#           git fetch origin
+#           git checkout -b $MAIN_MERGE_BRANCH main
+#           git push -u origin $MAIN_MERGE_BRANCH
+          
+#           branches=$(git ls-remote --heads origin "heads/rc-*" | awk -F'/' '{print $3}')
+#           for branch in $branches
+#           do
+#             # git checkout -b $branch origin/$branch
+#             # git push -u origin $branch
+#             echo "$branch"
+#             echo "$MAIN_MERGE_BRANCH"
+#             hub pull-request -b $MAIN_MERGE_BRANCH -h $branch -m "Pull Request for $branch"
+#           done
+          
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
 # name: Open PR for RC branches
 
