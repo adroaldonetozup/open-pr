@@ -63,8 +63,12 @@ jobs:
           # Obtém todas as branches com o prefixo "rc-"
           RC_BRANCHES=$(git branch --list 'rc-*')
 
+          echo "RC_BRANCHES: $RC_BRANCHES"
+
           # Remove o prefixo "rc-"
           BRANCHES=${RC_BRANCHES//rc-/}
+
+          echo "BRANCHES: $BRANCHES"
 
           # Itera sobre as branches e cria uma PR para cada uma
           for BRANCH in $RC_BRANCHES; do
