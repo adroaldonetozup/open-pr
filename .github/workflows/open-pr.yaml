@@ -1,0 +1,72 @@
+# name: Create RC Branches and Open PRs
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   create-branches-and-open-prs:
+#     runs-on: ubuntu-latest
+    
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+        
+#       - name: Create RC Branches and Open PRs
+#         run: |
+#           git fetch origin
+#           git checkout -b new-branch main
+#           git push -u origin new-branch
+          
+#           branches=$(git ls-remote --heads origin "rc-*" | awk -F'/' '{print $3}')
+#           for branch in $branches
+#           do
+#             git checkout -b $branch origin/$branch
+#             git push -u origin $branch
+#             hub pull-request -b main -h $branch -m "Pull Request for $branch"
+#           done
+          
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+name: Open PR for RC branches
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  open_pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Create branch
+        run: |
+          # Obtém o nome da branch main
+          MAIN_BRANCH=$(git branch --show-current)
+
+          # Cria uma nova branch a partir da main com o nome "rc-<timestamp>"
+          BRANCH_NAME="rc-$(date +%s)"
+          git checkout -b $BRANCH_NAME $MAIN_BRANCH
+          git push origin $BRANCH_NAME
+
+      - name: Create PR
+        run: |
+          # Obtém todas as branches com o prefixo "rc-"
+          RC_BRANCHES=$(git branch --list 'rc-*')
+
+          # Remove o prefixo "rc-"
+          RC_BRANCHES=${RC_BRANCHES//rc-/}
+
+          # Itera sobre as branches e cria uma PR para cada uma
+          for BRANCH in $RC_BRANCHES; do
+            PR_BRANCH="rc-$BRANCH"
+            echo "Creating PR for $PR_BRANCH"
+            # Cria a pull request
+            gh pr create --base $MAIN_BRANCH --head $PR_BRANCH --title "Update from $MAIN_BRANCH" --body "Automatically created PR"
+          done
