@@ -18,15 +18,17 @@ jobs:
           MAIN_MERGE_BRANCH="merge/main-$(date +%s)"
           git fetch origin
           git checkout -b $MAIN_MERGE_BRANCH main
-          git push origin $MAIN_MERGE_BRANCH
+          git push -u origin $MAIN_MERGE_BRANCH
           
-          git remote set-head origin -a
           branches=$(git ls-remote --heads origin "rc-*" | awk -F'/' '{print $3}')
           for branch in $branches
           do
             # git checkout -b $branch origin/$branch
             # git push -u origin $branch
-            hub pull-request -b $MAIN_MERGE_BRANCH -h $branch -m "Pull Request for $branch"
+            git remote set-head origin -a
+            echo "$branch"
+            echo "$MAIN_MERGE_BRANCH"
+            hub pull-request -b adroaldonetozup:$MAIN_MERGE_BRANCH -h adroaldonetozup:$branch -m "Pull Request for $branch"
           done
           
         env:
